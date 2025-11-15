@@ -6,23 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('nombres');
+            $table->string('apellidos');
+            $table->string('dni', 15)->unique();
+            $table->string('telefono', 20)->nullable();
+            $table->foreignId('almacen_id')->nullable()->constrained('almacens');
+            $table->string('tipo'); // admin, operador, etc.
+            $table->string('correo')->unique();
+            $table->string('clave');
             $table->rememberToken();
-            $table->timestamps();
+            //$table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('correo')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
