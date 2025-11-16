@@ -57,4 +57,11 @@ class User extends Authenticatable
             'clave' => 'hashed',
         ];
     }
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class);
+    }
+
+    
 }

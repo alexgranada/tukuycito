@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PanelFotografico extends Model
 {
-    protected $table = 'panel_fotografico';
+    protected $table = 'panel_fotograficos';
 
     protected $fillable = [
         'fecha',
@@ -23,6 +24,7 @@ class PanelFotografico extends Model
     ];
 
     // Relaciones
+    
     public function usuario()
     {
         return $this->belongsTo(Usuario::class);
@@ -33,8 +35,8 @@ class PanelFotografico extends Model
         return $this->belongsTo(Producto::class);
     }
 
-    public function fotos()
+    public function fotos(): HasMany
     {
-        return $this->hasMany(PanelFoto::class, 'panelfotografico_id');
+        return $this->hasMany(PanelFotos::class, 'panelfotografico_id');
     }
 }

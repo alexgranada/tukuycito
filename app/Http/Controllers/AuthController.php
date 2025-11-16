@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User; // <-- Necesario para verificar la existencia del DNI antes de Auth::attempt
 
 class AuthController extends Controller
 {
@@ -22,12 +23,27 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials = [
-            'dni' => $request->dni,
-            'password' => $request->password, // SIEMPRE usando 'password' aquí
-        ];
+        $dni = $request->dni;
+        $password = $request->password;
 
-        // Intenta autenticar
+        // 1. Buscamos al usuario solo por DNI.
+        // Esto permite diferenciar si la falla es por DNI no existente o por clave incorrecta.
+        // NOTA: Se asume que tienes un modelo User configurado en App\Models\User y la columna 'dni'.
+        $user = User::where('dni', $dni)->first(); 
+        
+        if (!$user) {
+            // Caso 2: Usuario NO registrado / DNI no encontrado
+            return back()->withErrors([
+                'not_registered' => 'No tienes acceso al sistema, comuniquese con el ingeniero de sistemas :-)',
+            ])->onlyInput('dni');
+        }
+
+        // 2. Si el usuario existe, intentamos la autenticación completa.
+        $credentials = [
+            'dni' => $dni,
+            'password' => $password,
+        ];
+        
         if (Auth::attempt($credentials, $request->filled('remember'))) {
 
             $request->session()->regenerate();
@@ -35,8 +51,9 @@ class AuthController extends Controller
             return redirect()->intended('/dashboard');
         }
 
+        // Caso 1: DNI existe, pero la clave es incorrecta
         return back()->withErrors([
-            'dni' => 'Las credenciales proporcionadas (DNI o Clave) no coinciden con nuestros registros.',
+            'dni' => 'Las credenciales ingresadas no son válidas.', // Mensaje más adecuado
         ])->onlyInput('dni');
     }
 

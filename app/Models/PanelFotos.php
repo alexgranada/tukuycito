@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class PanelFoto extends Model
+class PanelFotos extends Model
 {
     protected $table = 'panel_fotos';
 
@@ -15,6 +16,17 @@ class PanelFoto extends Model
         'usuario_id',
         'descripcion'
     ];
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($foto) {
+            // Borra el archivo del storage cuando se elimina el registro
+            if ($foto->foto) {
+                Storage::delete($foto->foto);
+            }
+        });
+    }
 
     // Relaciones
     public function panel()
@@ -25,5 +37,9 @@ class PanelFoto extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class);
+    }
+    public function getUrlAttribute(): string
+    {
+        return Storage::url($this->foto);
     }
 }
