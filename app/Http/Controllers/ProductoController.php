@@ -42,7 +42,7 @@ class ProductoController extends Controller
         // Paginamos los resultados y mantenemos los filtros en la URL
         $productos = $query->orderBy('nombre', 'asc')->paginate(15)->appends($request->all());
 
-        return view('productos.index', compact('productos', 'tipos'));
+        return view('productos', compact('productos', 'tipos'));
     }
 
     /**
@@ -52,7 +52,7 @@ class ProductoController extends Controller
     {
         // Validación de datos
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:520',
             'codigo' => 'required|string|max:255|unique:productos,codigo',
             'tipo' => 'nullable|string|max:255',
             'uni_medida' => 'nullable|string|max:255',
@@ -87,7 +87,7 @@ class ProductoController extends Controller
     {
         // Validación de datos
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:520',
             'codigo' => [
                 'required',
                 'string',
@@ -182,7 +182,7 @@ class ProductoController extends Controller
     public function storeRapido(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'required|string|max:520',
             'codigo' => 'required|string|max:255|unique:productos,codigo',
             'uni_medida' => 'nullable|string|max:255',
             'tipo' => 'nullable|string|max:255',
