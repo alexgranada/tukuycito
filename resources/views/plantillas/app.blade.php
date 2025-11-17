@@ -12,8 +12,8 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/icono.png') }}" />
 
     <!-- *************
- ************ CSS Files *************
- ************* -->
+   ************ CSS Files *************
+   ************* -->
     <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap/bootstrap-icons.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.min.css') }}" />
 
@@ -118,9 +118,19 @@
                         <div class="mx-3 mt-2 d-grid">
                             <a href="perfil" class="btn btn-success btn-sm">Perfil</a>
                         </div>
+
+                        <!-- ***** INICIO: CAMBIO DE BOTÓN SALIR ***** -->
                         <div class="mx-3 mt-2 d-grid">
-                            <a href="login.html" class="btn btn-primary btn-sm">Salir</a>
+                            <!-- Se usa un formulario para enviar por POST, como lo requiere la ruta 'logout' -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    Salir
+                                </button>
+                            </form>
                         </div>
+                        <!-- ***** FIN: CAMBIO DE BOTÓN SALIR ***** -->
+
                     </div>
                 </div>
             </div>
@@ -132,6 +142,7 @@
         <!-- Main container start -->
         <div class="main-container">
 
+            <!-- ***** INICIO: SECCIÓN SIDEBAR ACTUALIZADA ***** -->
             <!-- Sidebar wrapper start -->
             <nav id="sidebar" class="sidebar-wrapper">
 
@@ -145,63 +156,112 @@
                 <!-- Sidebar menu starts -->
                 <div class="sidebarMenuScroll">
                     <ul class="sidebar-menu">
-                        <li class="active current-page">
+
+                        <!--
+                            Nota: Se usa Route::is('...') para comprobar la ruta actual.
+                            'active' en el li.treeview hace que el menú se expanda (si el JS está configurado para ello).
+                            'active' o 'current-page' en el li hijo resalta el enlace específico.
+                        -->
+
+                        <li class="{{ Route::is('dashboard') ? 'active current-page' : '' }}">
                             <a href="{{ route('dashboard') }}">
                                 <i class="bi bi-pie-chart"></i>
                                 <span class="menu-text">Dashboard</span>
                             </a>
                         </li>
 
-                        <li class="treeview">
+                        <!-- Usamos 'devengados.*' para que coincida con .index, .create, .edit, etc. -->
+                        <li class="treeview {{ Route::is('devengados.*') ? 'active' : '' }}">
                             <a href="#!">
                                 <i class="bi bi-stickies"></i>
                                 <span class="menu-text">Devengados</span>
                             </a>
                             <ul class="treeview-menu">
-                                <li>
+                                <!-- Clase 'active' para el <li> hijo -->
+                                <li class="{{ Route::is('devengados.index') ? 'active' : '' }}">
                                     <a href="{{ route('devengados.index') }}">Lista</a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="treeview">
+
+                        <li class="treeview {{ Route::is('paneles-fotograficos.*') ? 'active' : '' }}">
                             <a href="#!">
                                 <i class="bi bi-ui-checks-grid"></i>
                                 <span class="menu-text">Panel Fotográfico</span>
                             </a>
                             <ul class="treeview-menu">
-                                <li>
+                                <li class="{{ Route::is('paneles-fotograficos.index') ? 'active' : '' }}">
                                     <a href="{{ route('paneles-fotograficos.index') }}">Lista</a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="treeview">
+
+                        <!-- Aquí comprobamos dos grupos de rutas: prestamos.* O obras.* -->
+                        <li class="treeview {{ Route::is('prestamos.*') || Route::is('obras.*') ? 'active' : '' }}">
                             <a href="#!">
                                 <i class="bi bi-window-sidebar"></i>
-                                <span class="menu-text">Prestamos</span>
+                                <span class="menu-text">Préstamos</span>
                             </a>
                             <ul class="treeview-menu">
-                                <li>
+                                <!-- CORRECCIÓN: Cada enlace debe estar en su propio <li> -->
+                                <li class="{{ Route::is('prestamos.index') ? 'active' : '' }}">
                                     <a href="{{ route('prestamos.index') }}">Lista</a>
+                                </li>
+                                <li class="{{ Route::is('obras.index') ? 'active' : '' }}">
                                     <a href="{{ route('obras.index') }}">Agregar Proyectos</a>
                                 </li>
                             </ul>
                         </li>
-                        <li>
+
+                        <li class="{{ Route::is('productos.*') ? 'active current-page' : '' }}">
                             <a href="{{ route('productos.index') }}">
                                 <i class="bi bi-border-all"></i>
                                 <span class="menu-text">Productos</span>
                             </a>
                         </li>
+
+                        <li class="treeview {{ Route::is('reportes.*') ? 'active' : '' }}">
+                            <a href="#!">
+                                <i class="bi bi-window-sidebar"></i>
+                                <span class="menu-text">Reportes</span>
+                            </a>
+                            <ul class="treeview-menu">
+
+                                <li class="{{-- {{ Route::is('reportes.devengados') ? 'active' : '' }} --}}">
+                                    <a href="{{-- {{ route('reportes.devengados') }} --}}">Devengados</a>
+                                </li>
+
+                                <li class="{{-- {{ Route::is('reportes.prestamos') ? 'active' : '' }} --}}">
+                                    <a href="#">Préstamos</a>
+                                </li>
+
+                                <li class="{{ Route::is('reportes.fotografico') ? 'active' : '' }}">
+                                    <a href="{{ route('reportes.fotografico') }}">Panel Fotográfico</a>
+                                </li>
+
+                            </ul>
+                        </li>
+
                         <hr>
-                        <li>
-                            <a href="events.html">
+
+                        <!-- Asumiendo que tendrás rutas como 'usuarios.index' y 'configuracion.index' -->
+                        <!-- TODO: Cambia el href cuando tengas las rutas listas -->
+                        <li class="{{ Route::is('usuarios.*') ? 'active current-page' : '' }}">
+                            <a href="{{ route('usuarios.index') }}">
                                 <i class="bi bi-calendar4"></i>
                                 <span class="menu-text">Usuarios</span>
                             </a>
                         </li>
+                        <li class="{{ Route::is('almacen.*') ? 'active current-page' : '' }}">
+                            <a href="{{ route('almacen.index') }}">
+                                <i class="bi bi-home"></i>
+                                <span class="menu-text">Almacén</span>
+                            </a>
+                        </li>
 
-                        <li>
-                            <a href="settings.html">
+                        <!-- TODO: Cambia el href cuando tengas las rutas listas -->
+                        <li class="{{ Route::is('configuracion.*') ? 'active current-page' : '' }}">
+                            <a href="#">
                                 <i class="bi bi-gear"></i>
                                 <span class="menu-text">Configuración</span>
                             </a>
@@ -213,6 +273,8 @@
 
             </nav>
             <!-- Sidebar wrapper end -->
+            <!-- ***** FIN: SECCIÓN SIDEBAR ACTUALIZADA ***** -->
+
 
             <!-- App container starts -->
             <div class="app-container">
@@ -268,16 +330,16 @@
     <!-- Page wrapper end -->
 
     <!-- *************
- ************ JavaScript Files *************
- ************* -->
+   ************ JavaScript Files *************
+   ************* -->
     <!-- Required jQuery first, then Bootstrap Bundle JS -->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 
     <!-- *************
- ************ Vendor Js Files *************
- ************* -->
+   ************ Vendor Js Files *************
+   ************* -->
     @yield('js')
 
     <!-- Custom JS files -->

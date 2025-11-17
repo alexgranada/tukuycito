@@ -39,6 +39,6 @@ class Usuario extends Model
 
     public function fotosPanel()
     {
-        return $this->hasMany(PanelFoto::class);
+        return $this->hasMany(PanelFotos::class);
     }
 }

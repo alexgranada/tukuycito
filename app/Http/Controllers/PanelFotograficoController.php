@@ -286,4 +286,29 @@ class PanelFotograficoController extends Controller
             return response()->json(['success' => false, 'message' => 'Error al eliminar la foto.'], 500);
         }
     }
+
+    public function generarPDF(PanelFotografico $panel)
+    {
+        try {
+            // Cargamos las relaciones necesarias
+            $panel->load('fotos', 'producto');
+            
+            // Pasamos los datos del panel a la vista del PDF
+            $data = compact('panel');
+            
+            // Generamos el PDF
+            $pdf = Pdf::loadView('paneles-fotograficos.pdf', $data);
+
+            // Opcional: Configurar el papel y orientación
+            // $pdf->setPaper('a4', 'portrait'); // portrait (vertical) o landscape (horizontal)
+
+            // Devolver el PDF al navegador
+            return $pdf->stream('reporte-panel-' . $panel->id . '.pdf');
+
+        } catch (\Exception $e) {
+            Log::error("Error al generar PDF del panel {$panel->id}: " . $e->getMessage());
+            return redirect()->route('paneles-fotograficos.index')
+                             ->with('error', 'No se pudo generar el PDF: ' . $e->getMessage());
+        }
+    }
 }

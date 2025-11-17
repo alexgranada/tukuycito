@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlmacenController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -8,6 +9,8 @@ use App\Http\Controllers\ObraController;
 use App\Http\Controllers\PanelFotograficoController;
 use App\Http\Controllers\PrestamoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/', [AuthController::class, 'validar'])->name('login.post');
@@ -50,4 +53,11 @@ Route::middleware('auth')->group(function () {
 
      // Ruta para eliminar una foto individual
      Route::delete('panel-fotos/{foto}', [PanelFotograficoController::class, 'eliminarFotoIndividual'])->name('paneles.fotos.destroy');
+
+     /* usuarios */
+     Route::resource('usuarios', UsuarioController::class);
+     Route::resource('almacen', AlmacenController::class);
+
+     Route::get('reportes/fotografico', [ReporteController::class, 'panelFotografico'])
+          ->name('reportes.fotografico');
 });
